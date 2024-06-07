@@ -47,6 +47,42 @@ class UsuariosController {
     }
   }
 
+  async solicitudClave(req, res) {
+    try {
+      console.log("Solicitud Clave" + req.body)
+      let newUser = await UsuariosService.solicitudClave(req.body);
+
+      return res.status(201).json({
+        message: "Created!",
+        usuario: newUser,
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        method: "solicitudClave",
+        message: err.message,
+      });
+    }
+  }
+
+  async generarClave(req, res) {
+    try {
+      console.log("Generar Clave" + req.body)
+      let newUser = await UsuariosService.generarClave(req.body);
+
+      return res.status(201).json({
+        message: "Created!",
+        usuario: newUser,
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        method: "createUsuario",
+        message: err.message,
+      });
+    }
+  }
+
   async createUsuario(req, res) {
     try {
       console.log("Peticiones Usuario" + req.body)
@@ -67,11 +103,11 @@ class UsuariosController {
 
   async login(req, res) {
     try {
-      const { email, password } = req.body;
-      let isUserRegistered = await AuthService.hasValidCredentials(email, password);
+      const { dni, password } = req.body;
+      let isUserRegistered = await AuthService.hasValidCredentials(dni, password);
       if (isUserRegistered) {
-
-        const user = await UsuariosService.getUserByEmail(email);
+        console.log("generar token")
+        const user = await UsuariosService.getUserByDni(dni);
 
         const token = jwt.sign(user.toJSON(), process.env.PRIVATE_KEY, {
           expiresIn: "1d",

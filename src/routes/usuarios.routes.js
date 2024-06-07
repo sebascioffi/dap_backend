@@ -9,33 +9,39 @@ const router = Router();
 router.get("/", usuariosController.getUsuarios); //GET USUARIOS
 
 router.post(
-  "/",
+  "/solicitudClave",
   [
-    check("name").not().isEmpty(),
-    check("lastname").not().isEmpty(),
+    check("dni").not().isEmpty(), 
+    check("nombre").not().isEmpty(),
+    check("apellido").not().isEmpty(),
     check("email").not().isEmpty(),
+    checkFields,
+  ],
+  usuariosController.solicitudClave
+); //POST USUARIOS
+
+router.post(
+  "/generarClave",
+  [
+    check("dni").not().isEmpty(), 
     check("password").not().isEmpty(),
     checkFields,
   ],
-  usuariosController.createUsuario
-); //POST USUARIOS
-
+  usuariosController.generarClave
+);
 
 
 router.get("/:id", usuariosController.getUsuarioById); //GET USUARIOS BY ID
 router.post(
   "/login",
   [
-    check("email").not().isEmpty(),
+    check("dni").not().isEmpty(),
     check("password").not().isEmpty(),
     checkFields,
   ],
   usuariosController.login
 );
-router.delete('/:id',[
-  check('jwt').not().isEmpty(),
-  checkFields
-],validateJwt,usuariosController.deleteUsuario
+router.delete('/:id',[],usuariosController.deleteUsuario
 ); 
 
 export default router;

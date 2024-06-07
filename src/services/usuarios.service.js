@@ -23,31 +23,48 @@ class UsuariosService {
     }
   }
 
-  async getUserByEmail(email) {
+  async getUserByDni(dni) {
     try {
-      let user = await UsuariosModel.findOne({ email });
+      let user = await UsuariosModel.findOne({ dni });
       return user;
     } catch (err) {
       console.error(err);
-      throw new Error("Error in getUserById Service");
+      throw new Error("Error in getUserByDni Service");
     }
   }
-
-  async createUser(user) {
+  async solicitudClave(user) {
     try {
 
-      let isUserRegistered = await UsuariosModel.findOne({ email: user.email });
+      let isUserRegistered = await UsuariosModel.findOne({ dni: user.dni });
       if (isUserRegistered) {
-        throw new Error("User already registered");
+        throw new Error("Vecino ya registrado");
       }
       else {
-        user.password = bcrypt.hashSync(user.password, process.env.SALT);
+        user.habilitado = false;
         await UsuariosModel.create(user);
         return user;
       }
     } catch (err) {
       console.error(err);
-      throw new Error("Error in createUser Service");
+      throw new Error("Error in solicitudClave Service");
+    }
+  }
+  async generarClave(user) {
+    try {
+
+      let isUserRegistered = await UsuariosModel.findOne({ dni: user.dni });
+      if (!isUserRegistered) {
+        throw new Error("Vecino no registrado");
+      }
+      else {
+        isUserRegistered.password = bcrypt.hashSync(user.password, process.env.SALT);
+        await UsuariosModel.updateOne({dni : user.dni} , isUserRegistered);
+        //await UsuariosModel.create(user);
+        return user;
+      }
+    } catch (err) {
+      console.error(err);
+      throw new Error("Error en generarClave Service");
     }
   }
  

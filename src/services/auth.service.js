@@ -5,15 +5,15 @@ import UsuariosModel from "../models/Usuarios.js";
 
 
 class AuthService {
-  async hasValidCredentials(email, password) {
+  async hasValidCredentials(dni, password) {
     try {
       const hashedPassword = await bcrypt.hash(password, process.env.SALT);
-      const user = await UsuariosModel.findOne({ email });
-
+      const user = await UsuariosModel.findOne({ dni });
+      console.log("user" + user);
       if (user && hashedPassword === user.password) {
         return true;
       }
-
+      
       return false;
     } catch (err) {
       console.error(err);
