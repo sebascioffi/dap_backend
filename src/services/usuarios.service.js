@@ -46,7 +46,7 @@ class UsuariosService {
       }
     } catch (err) {
       console.error(err);
-      throw new Error("Error in solicitudClave Service");
+      throw new Error("Vecino ya registrado");
     }
   }
   async generarClave(user) {
@@ -58,6 +58,7 @@ class UsuariosService {
       }
       else {
         isUserRegistered.password = bcrypt.hashSync(user.password, process.env.SALT);
+        isUserRegistered.habilitado = true;
         await UsuariosModel.updateOne({dni : user.dni} , isUserRegistered);
         //await UsuariosModel.create(user);
         return user;
