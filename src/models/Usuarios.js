@@ -7,6 +7,7 @@ const UsuariosSchema = new Schema({
     apellido:String,
     email:String,
     password:String,
+    direccion:String,
     habilitado:Boolean
 });
 

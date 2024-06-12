@@ -9,6 +9,8 @@ import sitiosRoutes from "./src/routes/sitios.routes.js";
 import desperfectosRoutes from "./src/routes/desperfectos.routes.js";
 import promocionesRoutes from "./src/routes/promociones.routes.js";
 import usuarioRoutes from './src/routes/usuarios.routes.js';
+import personalRoutes from './src/routes/personal.routes.js';
+import reclamosMultimediaRoutes from './src/routes/reclamosmultimedia.routes.js';
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -34,6 +36,8 @@ app.use("/api/rubros",rubrosRoutes);
 app.use("/api/reclamos",reclamosRoutes);
 app.use("/api/promociones",promocionesRoutes);
 app.use("/api/usuario", usuarioRoutes);
+app.use("/api/personal", personalRoutes);
+app.use("/api/reclamosmultimedia", reclamosMultimediaRoutes);
 
 //mysqld --initialize -console
 //mysql -u root -p

@@ -14,10 +14,10 @@ router.post(
     check("dni").not().isEmpty(), 
     check("nombre").not().isEmpty(),
     check("apellido").not().isEmpty(),
-    check("email").not().isEmpty(),
+    check("direccion").not().isEmpty(),
     checkFields,
   ],
-  usuariosController.solicitudClave
+  usuariosController.solicitudClave,
 ); //POST USUARIOS
 
 router.post(
@@ -32,6 +32,12 @@ router.post(
 
 
 router.get("/:id", usuariosController.getUsuarioById); //GET USUARIOS BY ID
+
+router.get("/buscar/:dni", usuariosController.getUsuarioByDniSql);
+
+router.get("/buscarPorDni/:dni", usuariosController.getUsuarioByDni); //GET USUARIOS BY DNI
+
+
 router.post(
   "/login",
   [

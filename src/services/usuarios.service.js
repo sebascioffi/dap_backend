@@ -32,6 +32,8 @@ class UsuariosService {
       throw new Error("Error in getUserByDni Service");
     }
   }
+
+
   async solicitudClave(user) {
     try {
 
@@ -49,6 +51,8 @@ class UsuariosService {
       throw new Error("Error in solicitudClave Service");
     }
   }
+
+
   async generarClave(user) {
     try {
 

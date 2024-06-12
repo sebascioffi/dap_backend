@@ -42,12 +42,14 @@ export const crearReclamo = async (req, res) => {
                 descripcion , 
                 estado 
             } = req.body;
+            console.log("DOCUMENTO :" + documento);
         const [rows] = await pool.query(
             "INSERT INTO reclamos (documento , idSitio , idDesperfecto , descripcion , estado) VALUES (?,?,?,?,?)",
             [documento,idSitio,idDesperfecto, descripcion , estado]
         );
         res.status(201).json({ id: rows.insertId, descripcion });
     } catch (error) {
+        console.log(error);
         return res.status(500).json({ message: "Error en Servidor" });
     }
 };
