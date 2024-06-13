@@ -133,3 +133,25 @@ export const getFiltrarPorDesperfecto = async (req, res) => {
         return res.status(500).json({ message: "Error en Servidor" });
     }
 };
+
+
+export const getFiltrarPorInspector = async (req, res) => {
+    try {
+        const { idInspector } = req.params;
+        console.log("idInspector :" + idInspector);
+        const [categoria]  = await pool.query("SELECT categoria FROM personal WHERE LEGAJO = ?", [ idInspector]);
+        console.log("categoria :" + categoria[0].categoria );
+        const [rows] = await pool.query("SELECT A.* FROM RECLAMOS A, DESPERFECTOS B WHERE A.idDesperfecto = b.idDesperfecto and b.idRubro = ?", [
+            categoria[0].categoria,
+        ]);
+
+        if (rows.length <= 0) {
+            return res.status(404).json({ message: "Reclamos Inexistente" });
+        }
+
+        res.json(rows);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Error en Servidor" });
+    }
+};

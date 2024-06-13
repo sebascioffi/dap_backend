@@ -48,7 +48,7 @@ class UsuariosService {
       }
     } catch (err) {
       console.error(err);
-      throw new Error("Error in solicitudClave Service");
+      throw new Error("Vecino ya registrado");
     }
   }
 
