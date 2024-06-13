@@ -62,6 +62,7 @@ class UsuariosService {
       }
       else {
         isUserRegistered.password = bcrypt.hashSync(user.password, process.env.SALT);
+        isUserRegistered.habilitado = true;
         await UsuariosModel.updateOne({dni : user.dni} , isUserRegistered);
         //await UsuariosModel.create(user);
         return user;
