@@ -44,9 +44,6 @@ export const updateRubro = async (req, res) => {
     try {
         const { idRubro } = req.params;
         const { descripcion } = req.body;
-        console.log( "IdRubro :" + idRubro);
-        console.log( "descripcion :" + descripcion);
-
         const [result] = await pool.query(
             "UPDATE rubros SET descripcion = IFNULL(?, descripcion) WHERE idRubro = ?",
             [descripcion, idRubro]

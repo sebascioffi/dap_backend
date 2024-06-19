@@ -8,7 +8,8 @@ const UsuariosSchema = new Schema({
     email:String,
     password:String,
     direccion:String,
-    habilitado:Boolean
+    habilitado:Boolean,
+    claveGenerada:Boolean
 });
 
 const Usuarios = mongoose.model('Usuarios',UsuariosSchema);

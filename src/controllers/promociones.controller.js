@@ -45,6 +45,8 @@ export const getPromocionPorId = async (req, res) => {
 export const getPromocionesPorEstado = async (req, res) => {
   try {
     const estado = req.params.estado;
+    console.log(estado);
+    console.log(req.params.estado);
     let promociones = await serviceGetPromocionesPorEstado(estado);
     if (!promociones) {
       return res.status(400).json({

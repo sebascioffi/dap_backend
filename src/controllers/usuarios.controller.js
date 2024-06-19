@@ -48,7 +48,7 @@ class UsuariosController {
     }
   }
 
-  async getUsuarioByDniSql(req,res){
+  async getUsuarioByDniSql(req, res) {
     const dni = req.params.dni;
     try {
       const [rows] = await pool.query(
@@ -89,23 +89,32 @@ class UsuariosController {
   async solicitudClave(req, res) {
     try {
       console.log("Solicitud Clave" + req.body)
-      let newUser = await UsuariosService.solicitudClave(req.body);
       const documento = req.body.dni;
-      const nombre = req.body.nombre;
-      const apellido = req.body.apellido;
-      const direccion = req.body.direccion;
-      await pool.query(
-        "INSERT INTO vecinos (documento, nombre, apellido, direccion) " +
-        "SELECT * FROM (SELECT ? AS documento, ? AS nombre, ? AS apellido, ? AS direccion) AS tmp " +
-        "WHERE NOT EXISTS ( " +
-        "    SELECT documento FROM vecinos WHERE documento = ? " +
-        ") LIMIT 1",
-        [documento, nombre, apellido, direccion, documento]
-      ); 
-      return res.status(201).json({
-        message: "Created!",
-        usuario: newUser,
-      });
+      const email = req.body.email;
+
+      const [rows] = await pool.query("SELECT * FROM VECINOS WHERE DOCUMENTO = ?", [
+        documento,
+      ]);
+
+      if (rows.length <= 0) {
+        return res.status(404).json({ message: "Vecino Inexistente" });
+      }
+      else{
+        let user = {
+          dni:rows[0].documento,
+          nombre:rows[0].nombre,
+          apellido:rows[0].apellido,
+          email:email,
+          password:rows[0].documento,
+          direccion:rows[0].direccion,
+        }
+        console.log(user);
+        let newUser = await UsuariosService.solicitudClave(user);
+        return res.status(201).json({
+          message: "Created!",
+          usuario: newUser,
+        });
+      }
     } catch (err) {
       console.error(err);
       return res.status(500).json({
@@ -155,7 +164,7 @@ class UsuariosController {
     try {
       const { dni, password } = req.body;
       const { found, validPassword } = await AuthService.hasValidCredentials(dni, password);
-  
+
       if (!found) {
         return res.status(404).json({
           status: 404,
@@ -169,14 +178,15 @@ class UsuariosController {
       } else {
         console.log("generar token");
         const user = await UsuariosService.getUserByDni(dni);
-  
+
         const token = jwt.sign(user.toJSON(), process.env.PRIVATE_KEY, {
           expiresIn: "1d",
         });
-  
+
         return res.status(200).json({
           status: 200,
           token,
+          user,
           message: "Token created successfully."
         });
       }
@@ -189,7 +199,7 @@ class UsuariosController {
       });
     }
   }
-  
+
 
   async deleteUsuario(req, res) {
     try {

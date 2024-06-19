@@ -44,6 +44,7 @@ export const serviceGetPromocionesPorCategoria = async (categoria) => {
 export const serviceCrearPromocion = async (promocion) => {
   try {
     console.log(promocion);
+    promocion.estado = "PENDIENTE";
     let promocionCreada = await Promocion.create(promocion);
     return promocionCreada;
 

@@ -33,7 +33,6 @@ class UsuariosService {
     }
   }
 
-
   async solicitudClave(user) {
     try {
 
@@ -43,6 +42,7 @@ class UsuariosService {
       }
       else {
         user.habilitado = false;
+        user.claveGenerada = false;
         await UsuariosModel.create(user);
         return user;
       }
@@ -61,26 +61,31 @@ class UsuariosService {
         throw new Error("Vecino no registrado");
       }
       else {
-        isUserRegistered.password = bcrypt.hashSync(user.password, process.env.SALT);
-        isUserRegistered.habilitado = true;
-        await UsuariosModel.updateOne({dni : user.dni} , isUserRegistered);
-        //await UsuariosModel.create(user);
-        return user;
+        if (!isUserRegistered.claveGenerada) {
+          isUserRegistered.password = bcrypt.hashSync(user.password, process.env.SALT);
+          isUserRegistered.habilitado = true;
+          isUserRegistered.claveGenerada = true;
+          await UsuariosModel.updateOne({ dni: user.dni }, isUserRegistered);
+          return user;
+        }
+        else {
+          throw new Error("Clave ya generada");
+        }
       }
     } catch (err) {
       console.error(err);
-      throw new Error("Error en generarClave Service");
+      throw Error(err);
     }
   }
- 
+
   async deleteUser(userId) {
-  try {
-    await UsuariosModel.findOneAndDelete({ _id: userId });
-  } catch (err) {
-    console.error(err);
-    throw new Error("Error in delete Service");
+    try {
+      await UsuariosModel.findOneAndDelete({ _id: userId });
+    } catch (err) {
+      console.error(err);
+      throw new Error("Error in delete Service");
+    }
   }
-}
 }
 
 export default new UsuariosService();

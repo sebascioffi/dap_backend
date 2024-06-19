@@ -12,9 +12,7 @@ router.post(
   "/solicitudClave",
   [
     check("dni").not().isEmpty(), 
-    check("nombre").not().isEmpty(),
-    check("apellido").not().isEmpty(),
-    check("direccion").not().isEmpty(),
+    check("email").not().isEmpty(),
     checkFields,
   ],
   usuariosController.solicitudClave,

@@ -17,7 +17,7 @@ router.get('/', getPromociones); //GET promocion.
 
 router.get('/:idPromocion',getPromocionPorId); //GET promocion. BY ID
 
-router.get('/buscarPorEstado',getPromocionesPorEstado); //GET promocion por Estado
+router.get('/buscarPorEstado/:estado',getPromocionesPorEstado); //GET promocion por Estado
 
 router.get('/buscarPorCategoria',getPromocionesPorCategoria); //GET promocion por Estado
 
