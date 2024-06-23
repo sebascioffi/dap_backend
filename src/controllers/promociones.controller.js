@@ -105,23 +105,27 @@ export const crearPromocion = async (req, res) => {
 
 export const updatePromocion = async (req, res) => {
   try {
-    let promocion = await serviceGetPromocionPorId(req.params.id);
+    // Obtiene la promoción por ID
+    let promocion = await serviceGetPromocionPorId(req.params.idPromocion);
     if (!promocion) {
       return res
         .status(404)
         .json({ method: "updatePromocion", message: "Promocion inexistente" });
     }
+    
+    // Actualiza la promoción con los campos enviados en el body
     const promocionModificada = await serviceUpdatePromocion(
-      req.params.id,
-      req.body,
-      promocion
+      req.params.idPromocion,
+      req.body
     );
+    
+    // Devuelve la promoción actualizada
     return res.status(200).json(promocionModificada);
   } catch (err) {
     console.error(err);
     return res.status(500).json({
-      method: "updateContact",
-      message: err,
+      method: "updatePromocion",
+      message: err.message,
     });
   }
 }

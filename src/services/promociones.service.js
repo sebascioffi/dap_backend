@@ -54,14 +54,15 @@ export const serviceCrearPromocion = async (promocion) => {
   }
 }
 
-export const serviceUpdatePromocion = async (id, fields, promocion) => {
+export const serviceUpdatePromocion = async (id, fields) => {
   try {
-    //fields.descripcion ? contact.descripcion = fields.descripcion : false;
-    //fields.categoria ? contact.categoria = fields.categoria : false;
-    //fields.precio_unitario ? contact.precio_unitario = fields.precio_unitario : false;
-    //fields.url_img ? contact.url_img = fields.url_img : false;
+    // Encuentra y actualiza la promoción con los campos proporcionados
+    const promocion = await Promocion.findOneAndUpdate(
+      { _id: id },
+      { $set: fields },
+      { new: true } // Esto devuelve la promoción actualizada
+    );
 
-    await Promocion.findOneAndUpdate({ _id: id }, promocion);
     return promocion;
   } catch (err) {
     console.error(err);
