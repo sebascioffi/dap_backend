@@ -41,6 +41,7 @@ class UsuariosService {
         throw new Error("Vecino ya registrado");
       }
       else {
+        user.password = bcrypt.hashSync(user.password, process.env.SALT);
         user.habilitado = false;
         user.claveGenerada = false;
         await UsuariosModel.create(user);
