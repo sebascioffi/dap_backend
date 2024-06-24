@@ -5,12 +5,14 @@ import { pool } from './src/db/connect.js';
 import { dbConnection }  from './src/db/config.js';
 import rubrosRoutes from "./src/routes/rubros.routes.js";
 import reclamosRoutes from "./src/routes/reclamos.routes.js";
+import denunciasRoutes from "./src/routes/denuncias.routes.js";
 import sitiosRoutes from "./src/routes/sitios.routes.js";
 import desperfectosRoutes from "./src/routes/desperfectos.routes.js";
 import promocionesRoutes from "./src/routes/promociones.routes.js";
 import usuarioRoutes from './src/routes/usuarios.routes.js';
 import personalRoutes from './src/routes/personal.routes.js';
 import reclamosMultimediaRoutes from './src/routes/reclamosmultimedia.routes.js';
+import denunciasMultimediaRoutes from "./src/routes/denunciasmultimedia.routes.js"
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -38,6 +40,8 @@ app.use("/api/promociones",promocionesRoutes);
 app.use("/api/usuario", usuarioRoutes);
 app.use("/api/personal", personalRoutes);
 app.use("/api/reclamosmultimedia", reclamosMultimediaRoutes);
+app.use("/api/denunciasmultimedia", denunciasMultimediaRoutes);
+app.use("/api/denuncias", denunciasRoutes);
 
 //mysqld --initialize -console
 //mysql -u root -p

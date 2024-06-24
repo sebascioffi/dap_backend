@@ -35,6 +35,7 @@ router.get("/buscar/:dni", usuariosController.getUsuarioByDniSql);
 
 router.get("/buscarPorDni/:dni", usuariosController.getUsuarioByDni); //GET USUARIOS BY DNI
 
+router.put("/habilitar/:dni", usuariosController.habilitarUsuario) //habilitar usuario
 
 router.post(
   "/login",
@@ -45,6 +46,7 @@ router.post(
   ],
   usuariosController.login
 );
+
 router.delete('/:id',[],usuariosController.deleteUsuario
 ); 
 

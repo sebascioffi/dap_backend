@@ -178,6 +178,12 @@ class UsuariosController {
       } else {
         console.log("generar token");
         const user = await UsuariosService.getUserByDni(dni);
+        if (user.habilitado === false) {
+          return res.status(403).json({
+            status: 403,
+            message: "User is disabled.",
+          });
+        }
 
         const token = jwt.sign(user.toJSON(), process.env.PRIVATE_KEY, {
           expiresIn: "1d",
@@ -217,5 +223,34 @@ class UsuariosController {
       });
     }
   }
+
+  async habilitarUsuario(req, res) {
+    try {
+      const dni = req.params.dni;
+      let user = await UsuariosService.getUserByDni(dni);
+  
+      if (!user) {
+        return res.status(404).json({
+          method: "habilitarUsuario",
+          message: "Not Found",
+        });
+      }
+  
+      user.habilitado = true;
+      await user.save();
+  
+      return res.status(200).json({
+        method: "habilitarUsuario",
+        message: "User habilitated successfully",
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({
+        method: "habilitarUsuario",
+        message: err.message,
+      });
+    }
+  }
 }
+
 export default UsuariosController.getInstance();
