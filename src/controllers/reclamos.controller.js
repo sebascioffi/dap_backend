@@ -138,20 +138,33 @@ export const getFiltrarPorDesperfecto = async (req, res) => {
 export const getFiltrarPorInspector = async (req, res) => {
     try {
         const { idInspector } = req.params;
-        console.log("idInspector :" + idInspector);
-        const [categoria]  = await pool.query("SELECT categoria FROM personal WHERE LEGAJO = ?", [ idInspector]);
-        console.log("categoria :" + categoria[0].categoria );
-        const [rows] = await pool.query("SELECT A.* FROM RECLAMOS A, DESPERFECTOS B WHERE A.idDesperfecto = b.idDesperfecto and b.idRubro = ?", [
-            categoria[0].categoria,
-        ]);
 
-        if (rows.length <= 0) {
-            return res.status(404).json({ message: "Reclamos Inexistente" });
+        // Obtener el sector del personal a partir del legajo
+        const [personalRows] = await pool.query(
+            'SELECT sector FROM personal WHERE legajo = ?',
+            [idInspector]
+        );
+
+        if (personalRows.length === 0) {
+            return res.status(404).json({ message: 'Inspector no encontrado' });
         }
 
-        res.json(rows);
+        const sector = personalRows[0].sector;
+
+        // Obtener todos los reclamos relacionados con el sector
+        const [reclamosRows] = await pool.query(`
+            SELECT r.* 
+            FROM reclamos r
+            JOIN desperfectos d ON r.idDesperfecto = d.idDesperfecto
+            JOIN rubros rb ON d.idRubro = rb.idRubro
+            JOIN personal p ON rb.descripcion = p.sector
+            WHERE p.sector = ?`,
+            [sector]
+        );
+
+        res.status(200).json(reclamosRows);
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: "Error en Servidor" });
+        console.error('Error al filtrar reclamos por inspector:', error);
+        res.status(500).json({ message: 'Error en el servidor' });
     }
 };

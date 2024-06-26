@@ -20,7 +20,11 @@ export const login = async (req, res) => {
         // Verificar si se encontró algún usuario
         if (rows.length > 0) {
             // Usuario encontrado, devolver un mensaje de éxito
-            return res.status(200).json({ message: 'Usuario encontrado' });
+            const documento = rows[0].documento;
+            return res.status(200).json({
+                message: 'Usuario encontrado',
+                documento: documento
+            });
         } else {
             // No se encontró ningún usuario con el legajo y la contraseña proporcionados
             return res.status(404).json({ message: 'Usuario no encontrado' });
