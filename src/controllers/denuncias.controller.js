@@ -90,3 +90,21 @@ export const getFiltrarPorVecino = async (req, res) => {
         return res.status(500).json({ message: "Error en Servidor" });
     }
 };
+
+export const getVecinosDenunciados = async (req, res) => {
+    try {
+        const { documento } = req.params;
+        console.log("documento :" + documento);
+        const [rows] = await pool.query("SELECT A.* FROM DENUNCIAS A, VECINOSDENUNCIADOS B WHERE A.idDenuncia = B.idDenuncia AND b.documento = ?", [
+            documento,
+        ]);
+
+        if (rows.length <= 0) {
+            return res.status(204).json({ message: "Vecino sin denuncias cargadas" });
+        }
+        res.json(rows);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Error en Servidor" });
+    }
+};
