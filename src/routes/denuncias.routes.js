@@ -5,7 +5,8 @@ import {
     getDenunciaPorId, 
     getDenuncias,
     getFiltrarPorEstado,
-    getFiltrarPorVecino
+    getFiltrarPorVecino,
+    getVecinosDenunciados
 } from '../controllers/denuncias.controller.js';
 import checkFields from '../middlewares/validateFields.js';
 
@@ -27,5 +28,7 @@ router.post('/',[
 router.get('/filtrarPorEstado/:estado',getFiltrarPorEstado); //GET Filtrar por estado de reclamo
 
 router.get('/filtrarPorVecino/:documento',getFiltrarPorVecino); // GET Reclamos por dni vecino
+
+router.get('/vecinosDenunciados/:documento',getVecinosDenunciados); // GET Reclamos por dni vecino
 
 export default router;
