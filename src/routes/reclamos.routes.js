@@ -21,7 +21,6 @@ router.get('/:idReclamo',getReclamoPorId); //GET Reclamo por ID
 
 router.post('/',[
     check('documento').not().isEmpty(),
-    check('idSitio').not().isEmpty(),
     check('idDesperfecto').not().isEmpty(),
     check('descripcion').not().isEmpty(),
     check('estado').not().isEmpty(),

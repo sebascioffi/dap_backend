@@ -7,7 +7,8 @@ import {
     updateReclamo,
     deleteReclamo,
     getFiltrarPorEstado,
-    getFiltrarPorDesperfecto
+    getFiltrarPorDesperfecto,
+    getFiltrarPorInspector
 } from '../controllers/reclamosInspector.controller.js';
 //import jwtValidator from ('../middlewares/jwtValidator');
 import checkFields from '../middlewares/validateFields.js';
@@ -20,7 +21,6 @@ router.get('/:idReclamo',getReclamoPorId); //GET Reclamo por ID
 
 router.post('/',[
     check('legajo').not().isEmpty(),
-    check('idSitio').not().isEmpty(),
     check('idDesperfecto').not().isEmpty(),
     check('descripcion').not().isEmpty(),
     check('estado').not().isEmpty(),
@@ -35,5 +35,6 @@ router.get('/filtrarPorEstado/:estado',getFiltrarPorEstado); //GET Filtrar por e
 
 router.get('/filtrarPorDesperfecto/:idDesperfecto',getFiltrarPorDesperfecto); //GET Filtrar por desperfecto de reclamo
 
+router.get('/filtrarPorInspector/:idInspector',getFiltrarPorInspector); // GET Reclamos por idInspector
 
 export default router;

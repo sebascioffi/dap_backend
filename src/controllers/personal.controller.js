@@ -21,9 +21,11 @@ export const login = async (req, res) => {
         if (rows.length > 0) {
             // Usuario encontrado, devolver un mensaje de éxito
             const documento = rows[0].documento;
+            const legajo = rows[0].legajo;
             return res.status(200).json({
                 message: 'Usuario encontrado',
-                documento: documento
+                documento: documento,
+                legajo: legajo
             });
         } else {
             // No se encontró ningún usuario con el legajo y la contraseña proporcionados

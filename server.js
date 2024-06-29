@@ -14,6 +14,7 @@ import usuarioRoutes from './src/routes/usuarios.routes.js';
 import personalRoutes from './src/routes/personal.routes.js';
 import reclamosMultimediaRoutes from './src/routes/reclamosmultimedia.routes.js';
 import denunciasMultimediaRoutes from "./src/routes/denunciasmultimedia.routes.js"
+import reclamosMultimediaInspectorRoutes from "./src/routes/reclamosmultimediainspector.routes.js"
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -42,6 +43,7 @@ app.use("/api/promociones",promocionesRoutes);
 app.use("/api/usuario", usuarioRoutes);
 app.use("/api/personal", personalRoutes);
 app.use("/api/reclamosmultimedia", reclamosMultimediaRoutes);
+app.use("/api/reclamosmultimediainspector", reclamosMultimediaInspectorRoutes);
 app.use("/api/denunciasmultimedia", denunciasMultimediaRoutes);
 app.use("/api/denuncias", denunciasRoutes);
 

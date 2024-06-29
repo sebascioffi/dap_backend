@@ -36,20 +36,28 @@ export const getReclamoPorId = async (req, res) => {
 
 export const crearReclamo = async (req, res) => {
     try {
-        const { legajo , 
-                idSitio, 
-                idDesperfecto, 
-                descripcion , 
-                estado 
-            } = req.body;
-            console.log("legajo :" + legajo);
+        const { legajo, idSitio, idDesperfecto, descripcion, estado } = req.body;
+
+        // Obtener el mayor idReclamo de la tabla reclamos
+        const [maxReclamosRows] = await pool.query("SELECT MAX(idReclamo) AS maxIdReclamo FROM reclamos");
+        const maxIdReclamoReclamos = maxReclamosRows[0].maxIdReclamo || 0;
+
+        // Obtener el mayor idReclamo de la tabla reclamosInspector
+        const [maxReclamosInspectorRows] = await pool.query("SELECT MAX(idReclamo) AS maxIdReclamo FROM reclamosInspector");
+        const maxIdReclamoReclamosInspector = maxReclamosInspectorRows[0].maxIdReclamo || 0;
+
+        // Obtener el nuevo idReclamo como el mayor de los dos + 1
+        const newIdReclamo = Math.max(maxIdReclamoReclamos, maxIdReclamoReclamosInspector) + 1;
+
+        // Insertar el nuevo reclamo en la tabla reclamosInspector con el nuevo idReclamo
         const [rows] = await pool.query(
-            "INSERT INTO reclamosInspector (legajo , idSitio , idDesperfecto , descripcion , estado) VALUES (?,?,?,?,?)",
-            [legajo,idSitio,idDesperfecto, descripcion , estado]
+            "INSERT INTO reclamosInspector (idReclamo, legajo, idSitio, idDesperfecto, descripcion, estado) VALUES (?, ?, ?, ?, ?, ?)",
+            [newIdReclamo, legajo, idSitio, idDesperfecto, descripcion, estado]
         );
-        res.status(201).json({ id: rows.insertId, descripcion });
+
+        res.status(201).json({ id: newIdReclamo, descripcion });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return res.status(500).json({ message: "Error en Servidor" });
     }
 };
@@ -57,17 +65,13 @@ export const crearReclamo = async (req, res) => {
 export const updateReclamo = async (req, res) => {
     try {
         const { idReclamo } = req.params;
-        const { legajo , 
-            idSitio, 
-            idDesperfecto, 
-            descripcion , 
+        const {
             estado 
         } = req.body;
-        console.log( "idReclamo :" + idReclamo);
-
+        
         const [result] = await pool.query(
-            "UPDATE reclamosInspector SET legajo = ? , idSitio = ?, idDesperfecto = ? , descripcion = ? , estado = ?  WHERE idReclamo = ?",
-            [legajo, idSitio , idDesperfecto , descripcion , estado, idReclamo]
+            "UPDATE reclamosInspector SET estado = ?  WHERE idReclamo = ?",
+            [estado, idReclamo]
         );
 
         if (result.affectedRows === 0)
@@ -134,3 +138,37 @@ export const getFiltrarPorDesperfecto = async (req, res) => {
     }
 };
 
+
+export const getFiltrarPorInspector = async (req, res) => {
+    try {
+        const { idInspector } = req.params;
+
+        // Obtener el sector del personal a partir del legajo
+        const [personalRows] = await pool.query(
+            'SELECT sector FROM personal WHERE legajo = ?',
+            [idInspector]
+        );
+
+        if (personalRows.length === 0) {
+            return res.status(404).json({ message: 'Inspector no encontrado' });
+        }
+
+        const sector = personalRows[0].sector;
+
+        // Obtener todos los reclamos relacionados con el sector
+        const [reclamosRows] = await pool.query(`
+            SELECT r.* 
+            FROM reclamosinspector r
+            JOIN desperfectos d ON r.idDesperfecto = d.idDesperfecto
+            JOIN rubros rb ON d.idRubro = rb.idRubro
+            JOIN personal p ON rb.descripcion = p.sector
+            WHERE p.sector = ?`,
+            [sector]
+        );
+
+        res.status(200).json(reclamosRows);
+    } catch (error) {
+        console.error('Error al filtrar reclamos por inspector:', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+};

@@ -38,13 +38,29 @@ export const crearDenuncia = async (req, res) => {
               idSitio, 
               descripcion , 
               estado ,
-              aceptaResponsabilidad
+              aceptaResponsabilidad,
+              documentoDenunciado
           } = req.body;
           console.log("DOCUMENTO :" + documento);
       const [rows] = await pool.query(
           "INSERT INTO denuncias (documento , idSitio , descripcion , estado, aceptaResponsabilidad) VALUES (?,?,?,?,?)",
           [documento,idSitio, descripcion , estado, aceptaResponsabilidad]
       );
+      // Verificar si documentoVecino no es vacío y si existe en la tabla vecinos
+    if (documentoDenunciado !== "") {
+        const [vecinoRows] = await pool.query(
+          "SELECT * FROM vecinos WHERE documento = ?",
+          [documentoDenunciado]
+        );
+  
+        if (vecinoRows.length > 0) {
+          // Si existe, insertar en la tabla vecinosdenunciados
+          await pool.query(
+            "INSERT INTO vecinosdenunciados (idDenuncia, documento) VALUES (?,?)",
+            [rows.insertId, documentoDenunciado]
+          );
+        }
+      }
       res.status(201).json({ id: rows.insertId, descripcion });
   } catch (error) {
       console.log(error);
@@ -98,13 +114,38 @@ export const getVecinosDenunciados = async (req, res) => {
         const [rows] = await pool.query("SELECT A.* FROM DENUNCIAS A, VECINOSDENUNCIADOS B WHERE A.idDenuncia = B.idDenuncia AND b.documento = ?", [
             documento,
         ]);
-
         if (rows.length <= 0) {
-            return res.status(204).json({ message: "Vecino sin denuncias cargadas" });
+            return res.status(200).json({ message: "Vecino sin denuncias cargadas" });
         }
         res.json(rows);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Error en Servidor" });
+    }
+};
+
+export const updateDenuncia = async (req, res) => {
+    try {
+        const { idDenuncia } = req.params;
+        const { 
+            estado 
+        } = req.body;
+
+        const [result] = await pool.query(
+            "UPDATE denuncias SET estado = ?  WHERE idDenuncia = ?",
+            [estado, idDenuncia]
+        );
+
+        if (result.affectedRows === 0)
+            return res.status(404).json({ message: "Denuncia inexistente" });
+
+        const [rows] = await pool.query("SELECT * FROM denuncias WHERE idDenuncia = ?", [
+            idDenuncia,
+        ]);
+
+        res.json(rows[0]);
+    } catch (error) {
+        console.log (error);
+        return res.status(500).json({ message: "Error en servidor" });
     }
 };
