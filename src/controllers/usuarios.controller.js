@@ -164,37 +164,38 @@ class UsuariosController {
     try {
       const { dni, password } = req.body;
       const { found, validPassword } = await AuthService.hasValidCredentials(dni, password);
-
+  
       if (!found) {
         return res.status(404).json({
           status: 404,
           message: "User not found.",
         });
-      } else if (!validPassword) {
-        return res.status(401).json({
-          status: 401,
-          message: "Incorrect password.",
-        });
       } else {
-        console.log("generar token");
         const user = await UsuariosService.getUserByDni(dni);
         if (user.habilitado === false) {
           return res.status(403).json({
             status: 403,
             message: "User is disabled.",
           });
+        } else if (!validPassword) {
+          return res.status(401).json({
+            status: 401,
+            message: "Incorrect password.",
+          });
+        } else {
+          console.log("generar token");
+          
+          const token = jwt.sign(user.toJSON(), process.env.PRIVATE_KEY, {
+            expiresIn: "1d",
+          });
+  
+          return res.status(200).json({
+            status: 200,
+            token,
+            user,
+            message: "Token created successfully."
+          });
         }
-
-        const token = jwt.sign(user.toJSON(), process.env.PRIVATE_KEY, {
-          expiresIn: "1d",
-        });
-
-        return res.status(200).json({
-          status: 200,
-          token,
-          user,
-          message: "Token created successfully."
-        });
       }
     } catch (err) {
       console.error(err);
@@ -205,6 +206,7 @@ class UsuariosController {
       });
     }
   }
+  
 
 
   async deleteUsuario(req, res) {
